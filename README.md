@@ -5,8 +5,13 @@ gurincrivel (Pensamento) - "Dentro dos termos legais eu não sou obrigado a ouvi
 Mas eu posso criar um robô pra fazer isso pra mim"
 
 gurincrivel (Pensamento) - "Como identificar que ta rolando propaganda?"
+
 gurincrivel (Pensamento) - "Vou olha fixamente pra tela até a solução brotar na minha mente."
+
 gurincrivel (Pensamento) - "Puff"
+
 gurincrivel (Pensamento) - "Toda musica segue o padrao de <NOME DO ARTISTA> - <NOME DA MUSICA>. Já a propaganda não..."
+  
 gurincrivel (Pensamento) - "[Na linha 51](https://github.com/MrMenezes/spotifree/blob/5e745c753174318d3f74df1a253d485526748700/spotfree.py#L51) está a lógica básica que viabilizou a criação desse repositório"
+
 gurincrivel (Pensamento) - "O restante foi só fazer a mágica acontecer"
