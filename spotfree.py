@@ -13,7 +13,6 @@ class Window(QtGui.QDialog):
         self.createMessageGroupBox()
         self.createActions()
         self.createTrayIcon()
-        self.hwnd
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(self.messageGroupBox)
         self.setLayout(mainLayout)
@@ -35,7 +34,8 @@ class Window(QtGui.QDialog):
         if self.step >= 5:
             self.timer.stop()
 
-            self.hwnd = win32gui.GetForegroundWindow()
+            if self.hwnd is None:
+                self.hwnd = win32gui.GetForegroundWindow()
             self.typeLabel.setText('Caso esteja tocando '
                                    + win32gui.GetWindowText(self.hwnd) +
                                    ' \nclick em OK para não ouvir as propagandas.' +
