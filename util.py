@@ -16,7 +16,7 @@ def find_windown(process_name):
         def find_hwnd_by_process_name(hwnd, process_name):
             global spotify_hwnd
             if win32gui.IsWindow(hwnd) and win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
-                threadid, pid = win32process.GetWindowThreadProcessId(hwnd)
+                _, pid = win32process.GetWindowThreadProcessId(hwnd)
                 _wmi = GetObject('winmgmts:')
                 processes = _wmi.ExecQuery('Select * from win32_process')
                 for p in processes:
