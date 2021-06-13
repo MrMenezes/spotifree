@@ -1,16 +1,16 @@
 import time
-import psutil
-import pyautogui
 
-from win32 import win32gui
-from win32 import win32process
+from util import get_audio_session, find_windown, get_text
 
+SPOTIFY_PROCESS = "Spotify.exe"
 
 class SpotiFree():
 
     def __init__(self, start=True):
-        self.hwnd = self.find_spotify_windown()
+        self.hwnd = find_windown(SPOTIFY_PROCESS)
         self.adv = False
+        self.volume = get_audio_session(SPOTIFY_PROCESS)
+        self.unmute()
         if start:
             self.start()
 
@@ -20,10 +20,10 @@ class SpotiFree():
             time.sleep(1)
 
     def mute(self):
-        pyautogui.press('volumemute')
+        self.volume.SetMute(1, None) 
 
     def unmute(self):
-        pyautogui.press('volumemute')
+        self.volume.SetMute(0, None) 
 
     def verify(self):
         text = self.get_text()
@@ -38,27 +38,5 @@ class SpotiFree():
         else:
             raise Exception("Spotify está fechado")
 
-    def find_spotify_windown(self):
-        global spotify_hwnd
-        spotify_hwnd = None
-        
-        def find_hwnd_by_process_name(hwnd, process_name):
-            global spotify_hwnd
-            if win32gui.IsWindow(hwnd) and win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
-                nID=win32process.GetWindowThreadProcessId(hwnd)
-                del nID[0]
-                for abc in nID:
-                    try:
-                        pro=psutil.Process(abc).name()
-                    except psutil.NoSuchProcess:
-                        pass
-                    else:
-                        if pro == process_name and win32gui.GetWindowText(hwnd) != "":
-                            spotify_hwnd=hwnd
-                            return
-
-        win32gui.EnumWindows(find_hwnd_by_process_name, "Spotify.exe")
-        return spotify_hwnd
-
     def get_text(self):
-        return win32gui.GetWindowText(self.hwnd)
+        return get_text(self.hwnd)

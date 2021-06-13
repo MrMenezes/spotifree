@@ -1,10 +1,10 @@
-psutil==5.8.0
+# BASE
 pywin32==301
+pycaw==20181226
+
+# GUI
 PyQt5==5.15.4
-PyAutoGUI==0.9.36
 
 # API
 spotipy==2.18.0
-
-# DEV
 python-dotenv==0.17.1
