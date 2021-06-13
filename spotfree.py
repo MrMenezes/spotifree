@@ -1,84 +1,59 @@
-from PyQt4 import QtCore, QtGui
-import win32gui
+from PyQt5 import QtCore, QtWidgets, QtGui
+from util import find_spotify_windown, get_text
 import pyautogui
 
-
-class Window(QtGui.QDialog):
+class Window(QtWidgets.QDialog):
     def __init__(self):
         super(Window, self).__init__()
-        self.messageGroupBox = QtGui.QGroupBox("")
-        self.msg_wait = "Após clicar em iniciar vá para a tela do Spotify e aguarde 5 segundos"
+        self.messageGroupBox = QtWidgets.QGroupBox("")
         self.adv = False
-        self.hwnd = None
+        self.init_msg = 'Aproveite o silêncio em vez das propagandas :D'
+        self.hwnd = find_spotify_windown()
+        self.music = get_text(self.hwnd)
         self.createMessageGroupBox()
         self.createActions()
         self.createTrayIcon()
-        mainLayout = QtGui.QVBoxLayout()
+        mainLayout = QtWidgets.QVBoxLayout()
         mainLayout.addWidget(self.messageGroupBox)
         self.setLayout(mainLayout)
-
         self.trayIcon.show()
-        self.iniciar_button.clicked.connect(self.start_find)
-        self.ok_button.clicked.connect(self.ok)
-
         self.setWindowTitle("SpotiFree")
         self.resize(400, 100)
         icon = QtGui.QIcon("icon.png")
         self.trayIcon.setIcon(icon)
         self.setWindowIcon(icon)
-        self.timer = QtCore.QBasicTimer()
-        self.timer2 = QtCore.QTimer()
-        self.timer2.timeout.connect(self.tick)
-
-    def timerEvent(self, e):
-        if self.step >= 5:
-            self.timer.stop()
-
-            if self.hwnd is None:
-                self.hwnd = win32gui.GetForegroundWindow()
-            self.typeLabel.setText('Caso esteja tocando '
-                                   + win32gui.GetWindowText(self.hwnd) +
-                                   ' \nclick em OK para não ouvir as propagandas.' +
-                                   '\nCaso não seja a música clique novamente em iniciar.')
-            self.ok_button.show()
-            return
-        self.step = self.step + 1
-        self.typeLabel.setText(
-            "Após clicar em iniciar vá para a tela do Spotify e aguarde %d segundos" % (5 - self.step))
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.tick)
+        self.timer.start()
 
     def tick(self):
-        text = win32gui.GetWindowText(self.hwnd)
-        new_adv = not '-' in text
-        if self.adv != new_adv:
-            pyautogui.press('volumemute')
-        self.adv = new_adv
+        if not self.hwnd is None:
+            self.music = get_text(self.hwnd)
+            self.setWindowTitle("SpotiFree " + self.music)
+            self.typeLabel.setText(self.init_msg)
+            new_adv = not '-' in self.music
+            if self.adv != new_adv:
+                pyautogui.press('volumemute')
+            self.adv = new_adv
+        else:
+            self.typeLabel.setText('Spotify não encontrado, porfavor inicie o aplicativo')
+            self.hwnd = find_spotify_windown()
 
-    def start_find(self):
-        self.ok_button.hide()
-        self.step = 0
-        self.typeLabel.setText(self.msg_wait)
-        self.timer2.stop()
-        self.timer.start(1000, self)
-
-    def ok(self):
-        self.timer2.start(1000)
-        self.hide()
 
     def createMessageGroupBox(self):
-        self.typeLabel = QtGui.QLabel(self.msg_wait)
-        self.iniciar_button = QtGui.QPushButton("Iniciar")
-        self.ok_button = QtGui.QPushButton("Ok")
-        self.ok_button.hide()
-        self.iniciar_button.setDefault(True)
-        messageLayout = QtGui.QGridLayout()
+        self.typeLabel = QtWidgets.QLabel(self.init_msg)
+        self.ok_button = QtWidgets.QPushButton("Ok")
+        self.exit_button = QtWidgets.QPushButton("Sair")
+        messageLayout = QtWidgets.QGridLayout()
         messageLayout.addWidget(self.typeLabel, 0, 0)
-        messageLayout.addWidget(self.iniciar_button, 1, 4)
+        messageLayout.addWidget(self.exit_button, 1, 4)
         messageLayout.addWidget(self.ok_button, 1, 3)
         self.messageGroupBox.setLayout(messageLayout)
+        return
 
     def closeEvent(self, event):
         if self.trayIcon.isVisible():
-            QtGui.QMessageBox.information(self, "SpotiFree",
+            QtWidgets.QMessageBox.information(self, "SpotiFree",
                                           "O programa continuará executando. Para sair "
                                           "clique com botão direito no ícone no canto da tela"
                                           " e em seguida clique em <b>Sair</b>.")
@@ -86,22 +61,25 @@ class Window(QtGui.QDialog):
             event.ignore()
 
     def createActions(self):
-        self.minimizeAction = QtGui.QAction("M&inimizar", self,
+        self.minimizeAction = QtWidgets.QAction("M&inimizar", self,
                                             triggered=self.hide)
 
-        self.restoreAction = QtGui.QAction("&Restaurar", self,
+        self.restoreAction = QtWidgets.QAction("R&estaurar", self,
                                            triggered=self.showNormal)
 
-        self.quitAction = QtGui.QAction("&Sair", self,
-                                        triggered=QtGui.qApp.quit)
-
+        self.quitAction = QtWidgets.QAction("&Sair", self,
+                                        triggered=QtWidgets.qApp.quit)
+                                        
+        self.ok_button.clicked.connect(self.hide)
+        self.exit_button.clicked.connect(QtWidgets.qApp.quit)
+    
     def createTrayIcon(self):
-        self.trayIconMenu = QtGui.QMenu(self)
+        self.trayIconMenu = QtWidgets.QMenu(self)
         self.trayIconMenu.addAction(self.minimizeAction)
         self.trayIconMenu.addAction(self.restoreAction)
         self.trayIconMenu.addSeparator()
         self.trayIconMenu.addAction(self.quitAction)
-        self.trayIcon = QtGui.QSystemTrayIcon(self)
+        self.trayIcon = QtWidgets.QSystemTrayIcon(self)
         self.trayIcon.setContextMenu(self.trayIconMenu)
 
 
@@ -109,9 +87,9 @@ if __name__ == '__main__':
 
     import sys
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
-    QtGui.QApplication.setQuitOnLastWindowClosed(False)
+    QtWidgets.QApplication.setQuitOnLastWindowClosed(False)
 
     window = Window()
     window.show()
