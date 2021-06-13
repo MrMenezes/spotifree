@@ -6,7 +6,6 @@ class Window(QtWidgets.QDialog):
     def __init__(self):
         super(Window, self).__init__()
         self.messageGroupBox = QtWidgets.QGroupBox("")
-        self.adv = False
         self.init_msg = 'Aproveite o silêncio em vez das propagandas :D'
         self.spotifree = SpotiFree(start=False)
         self.createMessageGroupBox()
@@ -15,12 +14,8 @@ class Window(QtWidgets.QDialog):
         mainLayout = QtWidgets.QVBoxLayout()
         mainLayout.addWidget(self.messageGroupBox)
         self.setLayout(mainLayout)
-        self.trayIcon.show()
         self.setWindowTitle("SpotiFree")
         self.resize(400, 100)
-        icon = QtGui.QIcon("icon.png")
-        self.trayIcon.setIcon(icon)
-        self.setWindowIcon(icon)
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.tick)
         self.timer.start()
@@ -75,6 +70,10 @@ class Window(QtWidgets.QDialog):
         self.trayIconMenu.addAction(self.quitAction)
         self.trayIcon = QtWidgets.QSystemTrayIcon(self)
         self.trayIcon.setContextMenu(self.trayIconMenu)
+        self.trayIcon.show()
+        icon = QtGui.QIcon("icon.png")
+        self.trayIcon.setIcon(icon)
+        self.setWindowIcon(icon)
 
 
 if __name__ == '__main__':
