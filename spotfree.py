@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
-from util import find_spotify_windown, get_text
-import pyautogui
+from service import SpotiFree
+
 
 class Window(QtWidgets.QDialog):
     def __init__(self):
@@ -8,8 +8,7 @@ class Window(QtWidgets.QDialog):
         self.messageGroupBox = QtWidgets.QGroupBox("")
         self.adv = False
         self.init_msg = 'Aproveite o silêncio em vez das propagandas :D'
-        self.hwnd = find_spotify_windown()
-        self.music = get_text(self.hwnd)
+        self.spotifree = SpotiFree(start=False)
         self.createMessageGroupBox()
         self.createActions()
         self.createTrayIcon()
@@ -27,17 +26,12 @@ class Window(QtWidgets.QDialog):
         self.timer.start()
 
     def tick(self):
-        if not self.hwnd is None:
-            self.music = get_text(self.hwnd)
-            self.setWindowTitle("SpotiFree " + self.music)
+        try:
+            self.spotifree.verify()
+            self.setWindowTitle("SpotiFree " + self.spotifree.get_text())
             self.typeLabel.setText(self.init_msg)
-            new_adv = not '-' in self.music
-            if self.adv != new_adv:
-                pyautogui.press('volumemute')
-            self.adv = new_adv
-        else:
+        except:
             self.typeLabel.setText('Spotify não encontrado, porfavor inicie o aplicativo')
-            self.hwnd = find_spotify_windown()
 
 
     def createMessageGroupBox(self):

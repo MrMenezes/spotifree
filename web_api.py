@@ -1,7 +1,9 @@
 import spotipy
-from dotenv import load_dotenv
+
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 from spotipy.oauth2 import SpotifyOAuth
+from dotenv import load_dotenv
+
 
 load_dotenv()
 scope = ["user-read-recently-played",
