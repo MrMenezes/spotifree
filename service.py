@@ -20,11 +20,9 @@ class SpotiFree():
             time.sleep(1)
 
     def mute(self):
-        # check volux
         pyautogui.press('volumemute')
 
     def unmute(self):
-        # check volux
         pyautogui.press('volumemute')
 
     def verify(self):
