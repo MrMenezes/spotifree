@@ -14,5 +14,5 @@ PyQt4==4.11.4
 
 PyScreeze==0.1.9
 PyTweening==1.0.3
-pywin32==221
+pywin32==301
 six==1.10.0
